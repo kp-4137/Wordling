@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol GridViewControllerDataSource: AnyObject {
+    var currentGuesses: [[Character?]] {get}
+}
+
 class GridViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    weak var datasource: GridViewControllerDataSource?
     
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -31,16 +37,21 @@ class GridViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    
+    public func reloadData() {
+        collectionView.reloadData()
+    }
 
 }
 
 extension GridViewController {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 6
+        return datasource?.currentGuesses.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        let guesses = datasource?.currentGuesses ?? []
+        return guesses[section].count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -55,6 +66,10 @@ extension GridViewController {
         cell.layer.cornerRadius = 5
         cell.label.textColor = .systemGray
         cell.label.font = UIFont.boldSystemFont(ofSize: 20)
+        let guesses = datasource?.currentGuesses ?? []
+        if let letter = guesses[indexPath.section][indexPath.row]{
+            cell.configure(with: letter)
+        }
         return cell
     }
     

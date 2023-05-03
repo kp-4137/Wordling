@@ -9,6 +9,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
+    
     let keyboardVC = KeyboardViewController()
     let gridVC = GridViewController()
 
@@ -21,11 +23,13 @@ class ViewController: UIViewController {
     private func addChildren() {
         addChild(keyboardVC)
         keyboardVC.didMove(toParent: self)
+        keyboardVC.delegate = self
         keyboardVC.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(keyboardVC.view)
         
         addChild(gridVC)
         gridVC.didMove(toParent: self)
+        gridVC.datasource = self
         gridVC.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(gridVC.view)
         
@@ -47,4 +51,66 @@ class ViewController: UIViewController {
     }
 
 
+}
+
+extension ViewController: KeyboardViewControllerDelegate {
+    
+    func keyboardViewController(_ vc: KeyboardViewController, didTapKey letter: Character) {
+        if letter == "." {
+            deleteLetter()
+        } else {
+            insertLetter(letter)
+        }
+        gridVC.reloadData()
+    }
+    
+    func insertLetter(_ letter: Character) {
+        var stop = false
+        for i in 0..<guesses.count {
+            for j in 0..<guesses[i].count {
+                if guesses[i][j] == nil {
+                    guesses[i][j] = letter
+                    stop = true
+                    break
+                }
+            }
+            if stop {
+                break
+            }
+        }
+    }
+    
+    func deleteLetter() {
+        if guesses[0][0] == nil {
+            return
+        }
+        if guesses[guesses.count - 1][guesses[guesses.count - 1].count - 1] != nil {
+            guesses[guesses.count - 1][guesses[guesses.count - 1].count - 1] = nil
+            return
+        }
+        var stop = false
+        for i in 0..<guesses.count {
+            for j in 0..<guesses[i].count {
+                if guesses[i][j] == nil {
+                    if j > 0 {
+                        guesses[i][j-1] = nil
+                    } else {
+                        guesses[i-1][guesses[i-1].count - 1] = nil
+                    }
+                    stop = true
+                    break
+                }
+            }
+            if stop {
+                break
+            }
+        }
+    }
+    
+}
+
+extension ViewController: GridViewControllerDataSource {
+    var currentGuesses: [[Character?]] {
+        return guesses
+    }
 }
