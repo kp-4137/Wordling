@@ -9,25 +9,31 @@ import UIKit
 
 class SubmitViewController: UIViewController {
 
-    let button: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Submit", for: .normal)
-        button.backgroundColor = .systemGreen
-        button.layer.cornerRadius = 25
-        return button
-    }()
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        createButton()
+    }
+    
+    func createButton() {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.configuration = createConfig()
         view.addSubview(button)
         NSLayoutConstraint.activate([
-            button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 110),
-            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -110),
-            button.topAnchor.constraint(equalTo: view.topAnchor, constant: 35),
-            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -35)
-        ])
+                    button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 110),
+                    button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -110),
+                    button.topAnchor.constraint(equalTo: view.topAnchor, constant: 35),
+                    button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -35)
+                ])
     }
-
+    
+    func createConfig() -> UIButton.Configuration {
+        var config: UIButton.Configuration = .filled()
+        config.baseBackgroundColor = .systemGreen
+        config.title = "Submit"
+        config.cornerStyle = .capsule
+        return config
+    }
+    
 
 }
