@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     
     let keyboardVC = KeyboardViewController()
     let gridVC = GridViewController()
+    let submitVC = SubmitViewController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +34,11 @@ class ViewController: UIViewController {
         gridVC.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(gridVC.view)
         
+        addChild(submitVC)
+        submitVC.didMove(toParent: self)
+        submitVC.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(submitVC.view)
+        
         addConstraints()
     }
     
@@ -42,11 +48,16 @@ class ViewController: UIViewController {
             gridVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             gridVC.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             gridVC.view.bottomAnchor.constraint(equalTo: keyboardVC.view.topAnchor),
-            gridVC.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.6),
+            gridVC.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.50),
             
             keyboardVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             keyboardVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            keyboardVC.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            keyboardVC.view.bottomAnchor.constraint(equalTo: submitVC.view.topAnchor),
+            keyboardVC.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25),
+            
+            submitVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            submitVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            submitVC.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
