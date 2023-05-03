@@ -18,6 +18,7 @@ class SubmitViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.configuration = createConfig()
+        button.addTarget(self, action: #selector(submitBtnTapped), for: .touchUpInside)
         view.addSubview(button)
         NSLayoutConstraint.activate([
                     button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 110),
@@ -33,6 +34,10 @@ class SubmitViewController: UIViewController {
         config.title = "Submit"
         config.cornerStyle = .capsule
         return config
+    }
+    
+    @objc func submitBtnTapped() {
+        print("Pressed.")
     }
     
 
