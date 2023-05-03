@@ -9,6 +9,7 @@ import UIKit
 
 protocol GridViewControllerDataSource: AnyObject {
     var currentGuesses: [[Character?]] {get}
+    var currentGuessNumber: Int {get}
 }
 
 class GridViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
@@ -69,6 +70,9 @@ extension GridViewController {
         let guesses = datasource?.currentGuesses ?? []
         if let letter = guesses[indexPath.section][indexPath.row]{
             cell.configure(with: letter)
+        }
+        if indexPath.section == datasource?.currentGuessNumber {
+            cell.layer.borderColor = UIColor.systemCyan.cgColor
         }
         return cell
     }

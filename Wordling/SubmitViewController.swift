@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol SubmitViewControllerDelegate: AnyObject {
+    func submitViewController(_ vc: SubmitViewController, didTapSubmit letter: Character)
+}
+
 class SubmitViewController: UIViewController {
+    
+    weak var delegate: SubmitViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,8 +43,8 @@ class SubmitViewController: UIViewController {
     }
     
     @objc func submitBtnTapped() {
-        print("Pressed.")
+        print("submitBtnTapped")
+        delegate?.submitViewController(self, didTapSubmit: "l")
     }
-    
 
 }

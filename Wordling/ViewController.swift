@@ -10,7 +10,7 @@ import UIKit
 class ViewController: UIViewController {
     
     var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
-    var guessNumber: Int = 1
+    var guessNumber: Int = 0
     
     let keyboardVC = KeyboardViewController()
     let gridVC = GridViewController()
@@ -37,6 +37,7 @@ class ViewController: UIViewController {
         
         addChild(submitVC)
         submitVC.didMove(toParent: self)
+        submitVC.delegate = self
         submitVC.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(submitVC.view)
         
@@ -107,5 +108,16 @@ extension ViewController: KeyboardViewControllerDelegate {
 extension ViewController: GridViewControllerDataSource {
     var currentGuesses: [[Character?]] {
         return guesses
+    }
+    
+    var currentGuessNumber: Int {
+        return guessNumber
+    }
+}
+
+extension ViewController: SubmitViewControllerDelegate {
+    func submitViewController(_ vc: SubmitViewController, didTapSubmit letter: Character) {
+        guessNumber += 1
+        gridVC.reloadData()
     }
 }
