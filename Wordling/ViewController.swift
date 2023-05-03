@@ -10,6 +10,7 @@ import UIKit
 class ViewController: UIViewController {
     
     var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
+    var guessNumber: Int = 1
     
     let keyboardVC = KeyboardViewController()
     let gridVC = GridViewController()
@@ -76,46 +77,29 @@ extension ViewController: KeyboardViewControllerDelegate {
     }
     
     func insertLetter(_ letter: Character) {
-        var stop = false
-        for i in 0..<guesses.count {
-            for j in 0..<guesses[i].count {
-                if guesses[i][j] == nil {
-                    guesses[i][j] = letter
-                    stop = true
-                    break
-                }
-            }
-            if stop {
+        for j in 0..<guesses[guessNumber].count {
+            if guesses[guessNumber][j] == nil {
+                guesses[guessNumber][j] = letter
                 break
             }
         }
     }
     
     func deleteLetter() {
-        if guesses[0][0] == nil {
+        var currentRow = guesses[guessNumber]
+        if currentRow[0] == nil {
             return
-        }
-        if guesses[guesses.count - 1][guesses[guesses.count - 1].count - 1] != nil {
-            guesses[guesses.count - 1][guesses[guesses.count - 1].count - 1] = nil
-            return
-        }
-        var stop = false
-        for i in 0..<guesses.count {
-            for j in 0..<guesses[i].count {
-                if guesses[i][j] == nil {
-                    if j > 0 {
-                        guesses[i][j-1] = nil
-                    } else {
-                        guesses[i-1][guesses[i-1].count - 1] = nil
-                    }
-                    stop = true
+        } else if currentRow[currentRow.count - 1] != nil {
+            currentRow[currentRow.count - 1] = nil
+        } else {
+            for j in 1..<currentRow.count {
+                if currentRow[j] == nil {
+                    currentRow[j-1] = nil
                     break
                 }
             }
-            if stop {
-                break
-            }
         }
+        guesses[guessNumber] = currentRow
     }
     
 }
