@@ -9,7 +9,9 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    let answer = "tiger"
     var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
+    var submittedGuesses: [[Int?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
     var guessNumber: Int = 0
     
     let keyboardVC = KeyboardViewController()
@@ -117,15 +119,28 @@ extension ViewController: GridViewControllerDataSource {
     var currentGuessNumber: Int {
         return guessNumber
     }
+    
+    var currentSubmittedGuesses: [[Int?]] {
+        return submittedGuesses
+    }
 }
 
 extension ViewController: SubmitViewControllerDelegate {
     func submitBtnTapped(_ vc: SubmitViewController) {
         let currentRow = guesses[guessNumber]
-        if currentRow[currentRow.count - 1] != nil {
-            guessNumber += 1
-            NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
-            gridVC.reloadData()
+        for i in 0..<submittedGuesses[guessNumber].count {
+            if answer.contains(currentRow[i] ?? "/") {
+                if answer[answer.index(answer.startIndex, offsetBy: i)] == currentRow[i] {
+                    submittedGuesses[guessNumber][i] = 2
+                } else {
+                    submittedGuesses[guessNumber][i] = 1
+                }
+            } else {
+                submittedGuesses[guessNumber][i] = 0
+            }
         }
+        guessNumber += 1
+        NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
+        gridVC.reloadData()
     }
 }

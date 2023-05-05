@@ -9,6 +9,7 @@ import UIKit
 
 protocol GridViewControllerDataSource: AnyObject {
     var currentGuesses: [[Character?]] {get}
+    var currentSubmittedGuesses: [[Int?]] {get}
     var currentGuessNumber: Int {get}
 }
 
@@ -67,10 +68,17 @@ extension GridViewController {
         cell.layer.cornerRadius = 5
         cell.label.textColor = .systemGray
         cell.label.font = UIFont.boldSystemFont(ofSize: 20)
+        
         let guesses = datasource?.currentGuesses ?? []
-        if let letter = guesses[indexPath.section][indexPath.row]{
+        if let letter = guesses[indexPath.section][indexPath.row] {
             cell.configure(with: letter)
         }
+        
+        let submittedGuesses = datasource?.currentSubmittedGuesses ?? []
+        if let color = submittedGuesses[indexPath.section][indexPath.row] {
+            cell.configure(with: color)
+        }
+        
         if indexPath.section == datasource?.currentGuessNumber {
             cell.layer.borderColor = UIColor.systemCyan.cgColor
         }

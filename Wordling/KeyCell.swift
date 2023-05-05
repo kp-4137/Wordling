@@ -18,7 +18,7 @@ class KeyCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 18, weight: .medium)
         return label
     }()
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .darkGray
@@ -30,7 +30,7 @@ class KeyCell: UICollectionViewCell {
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError()
     }
@@ -39,12 +39,25 @@ class KeyCell: UICollectionViewCell {
         super.prepareForReuse()
         label.text = nil
     }
-
-    func configure(with letter: Character){
+    
+    func configure(with letter: Character) {
         if letter == "." {
             label.text = "DEL"
             return
         }
         label.text = String(letter).uppercased()
     }
+    
+    func configure(with color: Int) {
+        if color == 0 {
+            backgroundColor = .systemGray
+        } else if color == 1 {
+            backgroundColor = .systemOrange
+        } else {
+            backgroundColor = .systemGreen
+        }
+        label.textColor = .white
+        layer.borderWidth = 0
+    }
+    
 }
