@@ -84,6 +84,9 @@ extension ViewController: KeyboardViewControllerDelegate {
                 break
             }
         }
+        if guesses[guessNumber][guesses[guessNumber].count - 1] != nil {
+            NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: true)
+        }
     }
     
     func deleteLetter() {
@@ -92,6 +95,7 @@ extension ViewController: KeyboardViewControllerDelegate {
             return
         } else if currentRow[currentRow.count - 1] != nil {
             currentRow[currentRow.count - 1] = nil
+            NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
         } else {
             for j in 1..<currentRow.count {
                 if currentRow[j] == nil {
@@ -116,8 +120,12 @@ extension ViewController: GridViewControllerDataSource {
 }
 
 extension ViewController: SubmitViewControllerDelegate {
-    func submitViewController(_ vc: SubmitViewController, didTapSubmit letter: Character) {
-        guessNumber += 1
-        gridVC.reloadData()
+    func submitBtnTapped(_ vc: SubmitViewController) {
+        let currentRow = guesses[guessNumber]
+        if currentRow[currentRow.count - 1] != nil {
+            guessNumber += 1
+            NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
+            gridVC.reloadData()
+        }
     }
 }
