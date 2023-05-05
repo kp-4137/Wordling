@@ -142,5 +142,17 @@ extension ViewController: SubmitViewControllerDelegate {
         guessNumber += 1
         NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
         gridVC.reloadData()
+        
+        for i in 0..<submittedGuesses[guessNumber-1].count {
+            if submittedGuesses[guessNumber-1][i] != 2 {
+                if guessNumber == 6 {
+                    let failureAlert = UIAlertController(title: "Failure", message: "Oops! You used all your guesses!", preferredStyle: .alert)
+                    present(failureAlert, animated: true)
+                }
+                return
+            }
+        }
+        let successAlert = UIAlertController(title: "Success", message: "You took \(guessNumber) guesses!", preferredStyle: .alert)
+        present(successAlert, animated: true)
     }
 }
