@@ -27,14 +27,7 @@ class SubmitViewController: UIViewController {
                     submitBtn.topAnchor.constraint(equalTo: view.topAnchor, constant: 35),
                     submitBtn.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -35)
                 ])
-        observer = NotificationCenter.default.addObserver(forName: Notification.Name("toggleSubmitBtn"),
-                                                          object: nil,
-                                                          queue: .main,
-                                                          using: { notification in
-            guard let object = notification.object as? Bool else { return }
-            
-            submitBtn.isEnabled = object
-        })
+        toggleButton(button: submitBtn)
     }
     
     func createButton() -> UIButton {
@@ -52,6 +45,17 @@ class SubmitViewController: UIViewController {
         config.title = "Submit"
         config.cornerStyle = .capsule
         return config
+    }
+    
+    func toggleButton(button: UIButton) {
+        observer = NotificationCenter.default.addObserver(forName: Notification.Name("toggleSubmitBtn"),
+                                                          object: nil,
+                                                          queue: .main,
+                                                          using: { notification in
+            guard let object = notification.object as? Bool else { return }
+            
+            button.isEnabled = object
+        })
     }
     
     @objc func submitBtnTapped() {
