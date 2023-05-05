@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
     var submittedGuesses: [[Int?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
     var guessNumber: Int = 0
+    var keyColorMap: [Character: Int] = ["q": -1, "w": -1, "e": -1, "r": -1, "t": -1, "y": -1, "u": -1, "i": -1, "o": -1, "p": -1, "a": -1, "s": -1, "d": -1, "f": -1, "g": -1, "h": -1, "j": -1, "k": -1, "l": -1, "z": -1, "x": -1, "c": -1, "v": -1, "b": -1, "n": -1, "m": -1]
     
     let keyboardVC = KeyboardViewController()
     let gridVC = GridViewController()
@@ -28,6 +29,7 @@ class ViewController: UIViewController {
         addChild(keyboardVC)
         keyboardVC.didMove(toParent: self)
         keyboardVC.delegate = self
+        keyboardVC.datasource = self
         keyboardVC.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(keyboardVC.view)
         
@@ -111,6 +113,12 @@ extension ViewController: KeyboardViewControllerDelegate {
     
 }
 
+extension ViewController: KeyboardViewControllerDataSource {
+    var keyColorMapping: [Character : Int] {
+        return keyColorMap
+    }
+}
+
 extension ViewController: GridViewControllerDataSource {
     var currentGuesses: [[Character?]] {
         return guesses
@@ -132,16 +140,24 @@ extension ViewController: SubmitViewControllerDelegate {
             if answer.contains(currentRow[i] ?? "/") {
                 if answer[answer.index(answer.startIndex, offsetBy: i)] == currentRow[i] {
                     submittedGuesses[guessNumber][i] = 2
+                    keyColorMap[currentRow[i] ?? "/"] = 2
                 } else {
                     submittedGuesses[guessNumber][i] = 1
+                    if keyColorMap[currentRow[i] ?? "/"] != 2 {
+                        keyColorMap[currentRow[i] ?? "/"] = 1
+                    }
                 }
             } else {
                 submittedGuesses[guessNumber][i] = 0
+                if keyColorMap[currentRow[i] ?? "/"] != 2 {
+                    keyColorMap[currentRow[i] ?? "/"] = 0
+                }
             }
         }
         guessNumber += 1
         NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
         gridVC.reloadData()
+        keyboardVC.reloadData()
         
         for i in 0..<submittedGuesses[guessNumber-1].count {
             if submittedGuesses[guessNumber-1][i] != 2 {

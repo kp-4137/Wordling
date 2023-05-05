@@ -11,9 +11,14 @@ protocol KeyboardViewControllerDelegate: AnyObject {
     func keyboardViewController(_ vc: KeyboardViewController, didTapKey letter: Character)
 }
 
+protocol KeyboardViewControllerDataSource: AnyObject {
+    var keyColorMapping: [Character: Int] {get}
+}
+
 class KeyboardViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
     weak var delegate: KeyboardViewControllerDelegate?
+    weak var datasource: KeyboardViewControllerDataSource?
     
     let letters = ["qwertyuiop","asdfghjkl","zxcvbnm."]
     private var keys: [[Character]] = []
@@ -45,6 +50,10 @@ class KeyboardViewController: UIViewController, UICollectionViewDelegateFlowLayo
             keys.append(chars)
         }
     }
+    
+    public func reloadData() {
+        collectionView.reloadData()
+    }
 }
 
 extension KeyboardViewController {
@@ -62,8 +71,10 @@ extension KeyboardViewController {
                     else{
                         fatalError()
                     }
+        cell.layer.cornerRadius = 3
         let letter = keys[indexPath.section][indexPath.row]
         cell.configure(with: letter)
+        cell.configure(with: datasource?.keyColorMapping[letter] ?? -1)
         return cell
     }
     
@@ -79,7 +90,7 @@ extension KeyboardViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let margin: CGFloat = 20
+        let margin: CGFloat = 22
         let size: CGFloat = (collectionView.frame.size.width - margin) / 10
         let count: CGFloat = CGFloat(collectionView.numberOfItems(inSection: section))
         
