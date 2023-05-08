@@ -24,8 +24,8 @@ class SubmitViewController: UIViewController {
         NSLayoutConstraint.activate([
                     submitBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 110),
                     submitBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -110),
-                    submitBtn.topAnchor.constraint(equalTo: view.topAnchor, constant: 35),
-                    submitBtn.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -35)
+                    submitBtn.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
+                    submitBtn.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -15)
                 ])
         toggleButton(button: submitBtn)
     }

@@ -17,6 +17,7 @@
 		DA5FCA8C29FB155100D7B8A6 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5FCA8B29FB155100D7B8A6 /* KeyboardViewController.swift */; };
 		DA5FCA8E2A01109000D7B8A6 /* KeyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5FCA8D2A01109000D7B8A6 /* KeyCell.swift */; };
 		DA5FCA902A0251C500D7B8A6 /* SubmitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5FCA8F2A0251C500D7B8A6 /* SubmitViewController.swift */; };
+		DA5FCA922A08F2E200D7B8A6 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5FCA912A08F2E200D7B8A6 /* GameViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		DA5FCA8B29FB155100D7B8A6 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		DA5FCA8D2A01109000D7B8A6 /* KeyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCell.swift; sourceTree = "<group>"; };
 		DA5FCA8F2A0251C500D7B8A6 /* SubmitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitViewController.swift; sourceTree = "<group>"; };
+		DA5FCA912A08F2E200D7B8A6 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 				DA5FCA8B29FB155100D7B8A6 /* KeyboardViewController.swift */,
 				DA5FCA8D2A01109000D7B8A6 /* KeyCell.swift */,
 				DA5FCA8F2A0251C500D7B8A6 /* SubmitViewController.swift */,
+				DA5FCA912A08F2E200D7B8A6 /* GameViewController.swift */,
 			);
 			path = Wordling;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 				DA5FCA8A29FB14FB00D7B8A6 /* GridViewController.swift in Sources */,
 				DA5FCA8C29FB155100D7B8A6 /* KeyboardViewController.swift in Sources */,
 				DA5FCA7A29FB10A400D7B8A6 /* ViewController.swift in Sources */,
+				DA5FCA922A08F2E200D7B8A6 /* GameViewController.swift in Sources */,
 				DA5FCA8E2A01109000D7B8A6 /* KeyCell.swift in Sources */,
 				DA5FCA7629FB10A400D7B8A6 /* AppDelegate.swift in Sources */,
 				DA5FCA7829FB10A400D7B8A6 /* SceneDelegate.swift in Sources */,

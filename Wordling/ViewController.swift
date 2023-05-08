@@ -9,168 +9,55 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    let answer = "tiger"
-    var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
-    var submittedGuesses: [[Int?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
-    var guessNumber: Int = 0
-    var keyColorMap: [Character: Int] = ["q": -1, "w": -1, "e": -1, "r": -1, "t": -1, "y": -1, "u": -1, "i": -1, "o": -1, "p": -1, "a": -1, "s": -1, "d": -1, "f": -1, "g": -1, "h": -1, "j": -1, "k": -1, "l": -1, "z": -1, "x": -1, "c": -1, "v": -1, "b": -1, "n": -1, "m": -1]
+    let label: UILabel = {
+        let label = UILabel()
+        label.text = "WORDLE"
+        label.textColor = .white
+        label.textAlignment = .center
+        label.font = UIFont.boldSystemFont(ofSize: 35.0)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
-    let keyboardVC = KeyboardViewController()
-    let gridVC = GridViewController()
-    let submitVC = SubmitViewController()
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        addChildren()
-    }
-    
-    private func addChildren() {
-        addChild(keyboardVC)
-        keyboardVC.didMove(toParent: self)
-        keyboardVC.delegate = self
-        keyboardVC.datasource = self
-        keyboardVC.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(keyboardVC.view)
-        
-        addChild(gridVC)
-        gridVC.didMove(toParent: self)
-        gridVC.datasource = self
-        gridVC.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(gridVC.view)
-        
-        addChild(submitVC)
-        submitVC.didMove(toParent: self)
-        submitVC.delegate = self
-        submitVC.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(submitVC.view)
-        
-        addConstraints()
-    }
-    
-    private func addConstraints() {
+        view.backgroundColor = .systemRed
+        view.addSubview(label)
+        let startBtn = createButton()
+        view.addSubview(startBtn)
         NSLayoutConstraint.activate([
-            gridVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            gridVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            gridVC.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            gridVC.view.bottomAnchor.constraint(equalTo: keyboardVC.view.topAnchor),
-            gridVC.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.50),
+            label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 70),
+            label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -70),
+            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 375),
+            label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -375),
             
-            keyboardVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            keyboardVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            keyboardVC.view.bottomAnchor.constraint(equalTo: submitVC.view.topAnchor),
-            keyboardVC.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25),
-            
-            submitVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            submitVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            submitVC.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            startBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 80),
+            startBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -80),
+            startBtn.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 75),
+            startBtn.heightAnchor.constraint(equalToConstant: 50.0)
         ])
     }
-
-
-}
-
-extension ViewController: KeyboardViewControllerDelegate {
     
-    func keyboardViewController(_ vc: KeyboardViewController, didTapKey letter: Character) {
-        if letter == "." {
-            deleteLetter()
-        } else {
-            insertLetter(letter)
-        }
-        gridVC.reloadData()
+    func createButton() -> UIButton {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.configuration = createConfig()
+        button.addTarget(self, action: #selector(startBtnTapped), for: .touchUpInside)
+        return button
     }
     
-    func insertLetter(_ letter: Character) {
-        for j in 0..<guesses[guessNumber].count {
-            if guesses[guessNumber][j] == nil {
-                guesses[guessNumber][j] = letter
-                break
-            }
-        }
-        if guesses[guessNumber][guesses[guessNumber].count - 1] != nil {
-            NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: true)
-        }
+    func createConfig() -> UIButton.Configuration {
+        var config: UIButton.Configuration = .filled()
+        config.baseBackgroundColor = .systemTeal
+        config.title = "Start Game"
+        config.cornerStyle = .capsule
+        return config
     }
     
-    func deleteLetter() {
-        var currentRow = guesses[guessNumber]
-        if currentRow[0] == nil {
-            return
-        } else if currentRow[currentRow.count - 1] != nil {
-            currentRow[currentRow.count - 1] = nil
-            NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
-        } else {
-            for j in 1..<currentRow.count {
-                if currentRow[j] == nil {
-                    currentRow[j-1] = nil
-                    break
-                }
-            }
-        }
-        guesses[guessNumber] = currentRow
-    }
-    
-}
-
-extension ViewController: KeyboardViewControllerDataSource {
-    var keyColorMapping: [Character : Int] {
-        return keyColorMap
-    }
-}
-
-extension ViewController: GridViewControllerDataSource {
-    var currentGuesses: [[Character?]] {
-        return guesses
-    }
-    
-    var currentGuessNumber: Int {
-        return guessNumber
-    }
-    
-    var currentSubmittedGuesses: [[Int?]] {
-        return submittedGuesses
-    }
-}
-
-extension ViewController: SubmitViewControllerDelegate {
-    func submitBtnTapped(_ vc: SubmitViewController) {
-        let currentRow = guesses[guessNumber]
-        for i in 0..<submittedGuesses[guessNumber].count {
-            if answer.contains(currentRow[i] ?? "/") {
-                if answer[answer.index(answer.startIndex, offsetBy: i)] == currentRow[i] {
-                    submittedGuesses[guessNumber][i] = 2
-                    keyColorMap[currentRow[i] ?? "/"] = 2
-                } else {
-                    submittedGuesses[guessNumber][i] = 1
-                    if keyColorMap[currentRow[i] ?? "/"] != 2 {
-                        keyColorMap[currentRow[i] ?? "/"] = 1
-                    }
-                }
-            } else {
-                submittedGuesses[guessNumber][i] = 0
-                if keyColorMap[currentRow[i] ?? "/"] != 2 {
-                    keyColorMap[currentRow[i] ?? "/"] = 0
-                }
-            }
-        }
-        guessNumber += 1
-        NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
-        gridVC.reloadData()
-        keyboardVC.reloadData()
-        
-        for i in 0..<submittedGuesses[guessNumber-1].count {
-            if submittedGuesses[guessNumber-1][i] != 2 {
-                if guessNumber == 6 {
-                    let failureAlert = UIAlertController(title: "Failure", message: "Oops! You used all your guesses!", preferredStyle: .alert)
-                    failureAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemRed.withAlphaComponent(0.5)
-                    present(failureAlert, animated: true)
-                }
-                return
-            }
-        }
-        let successAlert = UIAlertController(title: "Success", message: "You took \(guessNumber) guesses!", preferredStyle: .alert)
-        successAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemGreen.withAlphaComponent(0.5)
-        present(successAlert, animated: true)
+    @objc func startBtnTapped() {
+        let gameVC = GameViewController()
+        let navVC = UINavigationController(rootViewController: gameVC)
+        navVC.modalPresentationStyle = .fullScreen
+        present(navVC, animated: true)
     }
 }

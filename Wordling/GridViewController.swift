@@ -35,7 +35,7 @@ class GridViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 35),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -35),
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
