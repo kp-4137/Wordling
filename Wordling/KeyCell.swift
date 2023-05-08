@@ -55,6 +55,8 @@ class KeyCell: UICollectionViewCell {
             backgroundColor = .systemGray
         } else if color == 1 {
             backgroundColor = .systemOrange
+        } else {
+            backgroundColor = .systemGreen
         }
         label.textColor = .white
         layer.borderWidth = 0

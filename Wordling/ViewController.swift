@@ -163,12 +163,14 @@ extension ViewController: SubmitViewControllerDelegate {
             if submittedGuesses[guessNumber-1][i] != 2 {
                 if guessNumber == 6 {
                     let failureAlert = UIAlertController(title: "Failure", message: "Oops! You used all your guesses!", preferredStyle: .alert)
+                    failureAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemRed.withAlphaComponent(0.5)
                     present(failureAlert, animated: true)
                 }
                 return
             }
         }
         let successAlert = UIAlertController(title: "Success", message: "You took \(guessNumber) guesses!", preferredStyle: .alert)
+        successAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemGreen.withAlphaComponent(0.5)
         present(successAlert, animated: true)
     }
 }
