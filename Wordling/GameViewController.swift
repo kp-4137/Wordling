@@ -143,41 +143,94 @@ extension GameViewController: GridViewControllerDataSource {
 extension GameViewController: SubmitViewControllerDelegate {
     func submitBtnTapped(_ vc: SubmitViewController) {
         let currentRow = guesses[guessNumber]
-        for i in 0..<submittedGuesses[guessNumber].count {
-            if answer.contains(currentRow[i] ?? "/") {
-                if answer[answer.index(answer.startIndex, offsetBy: i)] == currentRow[i] {
-                    submittedGuesses[guessNumber][i] = 2
-                    keyColorMap[currentRow[i] ?? "/"] = 2
-                } else {
-                    submittedGuesses[guessNumber][i] = 1
-                    if keyColorMap[currentRow[i] ?? "/"] != 2 {
-                        keyColorMap[currentRow[i] ?? "/"] = 1
+        let currentGuessString = String(currentRow.compactMap { $0 })
+        isValid(word: currentGuessString, apiKey: "7adf5b3a-3c5f-46db-9056-8d1ab69045d2") { (result) in
+            DispatchQueue.main.async {
+                if result == false {
+                    self.showInvalidWordAlert(message: "Word not found in our dictionary", duration: 1.0)
+                    return
+                }
+                for i in 0..<self.submittedGuesses[self.guessNumber].count {
+                    if self.answer.contains(currentRow[i] ?? "/") {
+                        if self.answer[self.answer.index(self.answer.startIndex, offsetBy: i)] == currentRow[i] {
+                            self.submittedGuesses[self.guessNumber][i] = 2
+                            self.keyColorMap[currentRow[i] ?? "/"] = 2
+                        } else {
+                            self.submittedGuesses[self.guessNumber][i] = 1
+                            if self.keyColorMap[currentRow[i] ?? "/"] != 2 {
+                                self.keyColorMap[currentRow[i] ?? "/"] = 1
+                            }
+                        }
+                    } else {
+                        self.submittedGuesses[self.guessNumber][i] = 0
+                        if self.keyColorMap[currentRow[i] ?? "/"] != 2 {
+                            self.keyColorMap[currentRow[i] ?? "/"] = 0
+                        }
                     }
                 }
-            } else {
-                submittedGuesses[guessNumber][i] = 0
-                if keyColorMap[currentRow[i] ?? "/"] != 2 {
-                    keyColorMap[currentRow[i] ?? "/"] = 0
+                self.guessNumber += 1
+                NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
+                self.gridVC.reloadData()
+                self.keyboardVC.reloadData()
+                for i in 0..<self.submittedGuesses[self.guessNumber-1].count {
+                    if self.submittedGuesses[self.guessNumber-1][i] != 2 {
+                        if self.guessNumber == 6 {
+                            let failureAlert = UIAlertController(title: "Failure", message: "Oops! You used all your guesses!", preferredStyle: .alert)
+                            failureAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemRed.withAlphaComponent(0.5)
+                            self.present(failureAlert, animated: true)
+                        }
+                        return
+                    }
                 }
+                let successAlert = UIAlertController(title: "Success", message: "You took \(self.guessNumber) guesses!", preferredStyle: .alert)
+                successAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemGreen.withAlphaComponent(0.5)
+                self.present(successAlert, animated: true)
             }
         }
-        guessNumber += 1
-        NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
-        gridVC.reloadData()
-        keyboardVC.reloadData()
-        
-        for i in 0..<submittedGuesses[guessNumber-1].count {
-            if submittedGuesses[guessNumber-1][i] != 2 {
-                if guessNumber == 6 {
-                    let failureAlert = UIAlertController(title: "Failure", message: "Oops! You used all your guesses!", preferredStyle: .alert)
-                    failureAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemRed.withAlphaComponent(0.5)
-                    present(failureAlert, animated: true)
-                }
+    }
+
+    func isValid(word: String, apiKey: String, completion: @escaping (Bool) -> Void) {
+        let urlString = "https://www.dictionaryapi.com/api/v3/references/thesaurus/json/\(word)?key=\(apiKey)"
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            completion(false)
+            return
+        }
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                completion(false)
                 return
             }
+            guard let data = data else {
+                print("Invalid data")
+                completion(false)
+                return
+            }
+            do {
+                let jsonArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
+                if let jsonArray = jsonArray, jsonArray.count > 0 {
+                    // Word is valid
+                    completion(true)
+                } else {
+                    // Word is invalid
+                    completion(false)
+                }
+            } catch {
+                print("Error: \(error.localizedDescription)")
+                completion(false)
+            }
         }
-        let successAlert = UIAlertController(title: "Success", message: "You took \(guessNumber) guesses!", preferredStyle: .alert)
-        successAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemGreen.withAlphaComponent(0.5)
-        present(successAlert, animated: true)
+        task.resume()
+    }
+    
+    func showInvalidWordAlert(message: String, duration: Double) {
+        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        self.present(alertController, animated: true, completion: nil)
+        // Dismiss the alert after a certain duration
+        let timer = DispatchTime.now() + duration
+        DispatchQueue.main.asyncAfter(deadline: timer) {
+            alertController.dismiss(animated: true, completion: nil)
+        }
     }
 }
