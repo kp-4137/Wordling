@@ -9,7 +9,7 @@ import UIKit
 
 class GameViewController: UIViewController {
     
-    let answer = "tiger"
+    var answer: String? = nil
     var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
     var submittedGuesses: [[Int?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
     var guessNumber: Int = 0
@@ -142,6 +142,19 @@ extension GameViewController: GridViewControllerDataSource {
 
 extension GameViewController: SubmitViewControllerDelegate {
     func submitBtnTapped(_ vc: SubmitViewController) {
+        if answer == nil {
+            struct Words: Decodable {
+                let fiveLetterWords: [String]
+            }
+            guard let url = Bundle.main.url(forResource: "words", withExtension: "json"),
+                  let data = try? Data(contentsOf: url),
+                  let words = try? JSONDecoder().decode(Words.self, from: data) else {
+                fatalError("Failed to load words.json")
+            }
+            let fiveLetterWords: [String] = words.fiveLetterWords
+            answer = fiveLetterWords.randomElement()!
+            print("Answer: \(answer!)")
+        }
         let currentRow = guesses[guessNumber]
         let currentGuessString = String(currentRow.compactMap { $0 })
         isValid(word: currentGuessString, apiKey: "7adf5b3a-3c5f-46db-9056-8d1ab69045d2") { (result) in
@@ -151,8 +164,8 @@ extension GameViewController: SubmitViewControllerDelegate {
                     return
                 }
                 for i in 0..<self.submittedGuesses[self.guessNumber].count {
-                    if self.answer.contains(currentRow[i] ?? "/") {
-                        if self.answer[self.answer.index(self.answer.startIndex, offsetBy: i)] == currentRow[i] {
+                    if self.answer!.contains(currentRow[i] ?? "/") {
+                        if self.answer![self.answer!.index(self.answer!.startIndex, offsetBy: i)] == currentRow[i] {
                             self.submittedGuesses[self.guessNumber][i] = 2
                             self.keyColorMap[currentRow[i] ?? "/"] = 2
                         } else {
