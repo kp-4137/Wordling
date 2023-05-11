@@ -185,19 +185,43 @@ extension GameViewController: SubmitViewControllerDelegate {
                 NotificationCenter.default.post(name: NSNotification.Name("toggleSubmitBtn"), object: false)
                 self.gridVC.reloadData()
                 self.keyboardVC.reloadData()
+                var alertTitle: String = ""
+                var alertMessage: String = ""
                 for i in 0..<self.submittedGuesses[self.guessNumber-1].count {
                     if self.submittedGuesses[self.guessNumber-1][i] != 2 {
                         if self.guessNumber == 6 {
-                            let failureAlert = UIAlertController(title: "Failure", message: "Oops! You used all your guesses!", preferredStyle: .alert)
-                            failureAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemRed.withAlphaComponent(0.5)
-                            self.present(failureAlert, animated: true)
+                            alertTitle = "Failure"
+                            alertMessage = "Oops! You used all your guesses! The correct answer was \(self.answer!)"
+                            break
                         }
                         return
                     }
                 }
-                let successAlert = UIAlertController(title: "Success", message: "You took \(self.guessNumber) guesses!", preferredStyle: .alert)
-                successAlert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = .systemGreen.withAlphaComponent(0.5)
-                self.present(successAlert, animated: true)
+                if alertTitle == "" {
+                    alertTitle = "Success"
+                    alertMessage = "You took \(self.guessNumber) guesses!"
+                }
+                let finishAlert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+                let returnAction = UIAlertAction(title: "Back to Home", style: .destructive) { (action:UIAlertAction!) in
+                    finishAlert.dismiss(animated: true)
+                    let homeVC = ViewController()
+                    let navVC = UINavigationController(rootViewController: homeVC)
+                    navVC.modalPresentationStyle = .fullScreen
+                    self.present(navVC, animated: true)
+                }
+                let newGameAction = UIAlertAction(title: "New Game", style: .default) { (action:UIAlertAction!) in
+                    finishAlert.dismiss(animated: true)
+                    self.answer = nil
+                    self.guesses = Array(repeating: Array(repeating: nil, count: 5), count: 6)
+                    self.submittedGuesses = Array(repeating: Array(repeating: nil, count: 5), count: 6)
+                    self.guessNumber = 0
+                    self.keyColorMap = ["q": -1, "w": -1, "e": -1, "r": -1, "t": -1, "y": -1, "u": -1, "i": -1, "o": -1, "p": -1, "a": -1, "s": -1, "d": -1, "f": -1, "g": -1, "h": -1, "j": -1, "k": -1, "l": -1, "z": -1, "x": -1, "c": -1, "v": -1, "b": -1, "n": -1, "m": -1]
+                    self.gridVC.reloadData()
+                    self.keyboardVC.reloadData()
+                }
+                finishAlert.addAction(returnAction)
+                finishAlert.addAction(newGameAction)
+                self.present(finishAlert, animated: true)
             }
         }
     }
