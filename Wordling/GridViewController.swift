@@ -11,6 +11,7 @@ protocol GridViewControllerDataSource: AnyObject {
     var currentGuesses: [[Character?]] {get}
     var currentSubmittedGuesses: [[Int?]] {get}
     var currentGuessNumber: Int {get}
+    var currentNumOfLetters: Int? {get}
 }
 
 class GridViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
@@ -19,7 +20,7 @@ class GridViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 4
+        layout.minimumInteritemSpacing = 2
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .clear
@@ -52,8 +53,7 @@ extension GridViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let guesses = datasource?.currentGuesses ?? []
-        return guesses[section].count
+        return datasource?.currentNumOfLetters ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -86,8 +86,17 @@ extension GridViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let margin: CGFloat = 20
-        let size: CGFloat = (collectionView.frame.size.width - margin) / 5
+        let numOfLetters: Int = datasource?.currentNumOfLetters ?? 0
+        var spacing: Int = 4
+        if numOfLetters == 4 {
+            spacing = 20
+        } else if numOfLetters == 6 {
+            spacing = 2
+        } else {
+            spacing = 4
+        }
+        let margin: CGFloat = CGFloat(4 + (numOfLetters-1) * spacing)
+        let size: CGFloat = (collectionView.frame.size.width - margin) / CGFloat(numOfLetters)
         
         return CGSize(width: size, height: size)
     }

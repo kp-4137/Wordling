@@ -11,10 +11,10 @@ class ViewController: UIViewController {
     
     let label: UILabel = {
         let label = UILabel()
-        label.text = "WORDLE"
+        label.text = "WORDLING"
         label.textColor = .white
         label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 35.0)
+        label.font = UIFont.boldSystemFont(ofSize: 45.0)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -23,39 +23,54 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemRed
         view.addSubview(label)
-        let startBtn = createButton()
-        view.addSubview(startBtn)
+        let fourLetterBtn = createButton(letters: 4)
+        let fiveLetterBtn = createButton(letters: 5)
+        let sixLetterBtn = createButton(letters: 6)
+        view.addSubview(fourLetterBtn)
+        view.addSubview(fiveLetterBtn)
+        view.addSubview(sixLetterBtn)
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 70),
             label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -70),
-            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 375),
-            label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -375),
+            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
             
-            startBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 80),
-            startBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -80),
-            startBtn.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 75),
-            startBtn.heightAnchor.constraint(equalToConstant: 50.0)
+            fourLetterBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 80),
+            fourLetterBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -80),
+            fourLetterBtn.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 75),
+            fourLetterBtn.heightAnchor.constraint(equalToConstant: 50.0),
+            
+            fiveLetterBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 80),
+            fiveLetterBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -80),
+            fiveLetterBtn.topAnchor.constraint(equalTo: fourLetterBtn.bottomAnchor, constant: 25),
+            fiveLetterBtn.heightAnchor.constraint(equalToConstant: 50.0),
+            
+            sixLetterBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 80),
+            sixLetterBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -80),
+            sixLetterBtn.topAnchor.constraint(equalTo: fiveLetterBtn.bottomAnchor, constant: 25),
+            sixLetterBtn.heightAnchor.constraint(equalToConstant: 50.0)
         ])
     }
     
-    func createButton() -> UIButton {
+    func createButton(letters: Int) -> UIButton {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.configuration = createConfig()
-        button.addTarget(self, action: #selector(startBtnTapped), for: .touchUpInside)
+        button.configuration = createConfig(letters: letters)
+        button.tag = letters
+        button.addTarget(self, action: #selector(startBtnTapped(_:)), for: .touchUpInside)
         return button
     }
     
-    func createConfig() -> UIButton.Configuration {
+    func createConfig(letters: Int) -> UIButton.Configuration {
         var config: UIButton.Configuration = .filled()
         config.baseBackgroundColor = .systemTeal
-        config.title = "Start Game"
+        config.title = "\(letters) Letters"
         config.cornerStyle = .capsule
         return config
     }
     
-    @objc func startBtnTapped() {
+    @objc func startBtnTapped(_ sender: UIButton) {
         let gameVC = GameViewController()
+        gameVC.numOfLetters = sender.tag
         let navVC = UINavigationController(rootViewController: gameVC)
         navVC.modalPresentationStyle = .fullScreen
         present(navVC, animated: true)

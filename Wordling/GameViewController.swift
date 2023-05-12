@@ -9,6 +9,7 @@ import UIKit
 
 class GameViewController: UIViewController {
     
+    var numOfLetters: Int? = nil
     var answer: String? = nil
     var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
     var submittedGuesses: [[Int?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
@@ -27,6 +28,10 @@ class GameViewController: UIViewController {
                                                            style: .plain,
                                                            target: self,
                                                            action: #selector(dismissSelf))
+        if let numOfLetters = numOfLetters {
+            guesses = Array(repeating: Array(repeating: nil, count: numOfLetters), count: 6)
+            submittedGuesses = Array(repeating: Array(repeating: nil, count: numOfLetters), count: 6)
+        }
         addChildren()
     }
     
@@ -137,6 +142,10 @@ extension GameViewController: GridViewControllerDataSource {
     
     var currentSubmittedGuesses: [[Int?]] {
         return submittedGuesses
+    }
+    
+    var currentNumOfLetters: Int? {
+        return numOfLetters
     }
 }
 
