@@ -153,15 +153,24 @@ extension GameViewController: SubmitViewControllerDelegate {
     func submitBtnTapped(_ vc: SubmitViewController) {
         if answer == nil {
             struct Words: Decodable {
+                let fourLetterWords: [String]
                 let fiveLetterWords: [String]
+                let sixLetterWords: [String]
             }
             guard let url = Bundle.main.url(forResource: "words", withExtension: "json"),
                   let data = try? Data(contentsOf: url),
                   let words = try? JSONDecoder().decode(Words.self, from: data) else {
                 fatalError("Failed to load words.json")
             }
-            let fiveLetterWords: [String] = words.fiveLetterWords
-            answer = fiveLetterWords.randomElement()!
+            var wordsArray: [String] = []
+            if numOfLetters == 4 {
+                wordsArray = words.fourLetterWords
+            } else if numOfLetters == 5 {
+                wordsArray = words.fiveLetterWords
+            } else if numOfLetters == 6 {
+                wordsArray = words.sixLetterWords
+            }
+            answer = wordsArray.randomElement()!
             print("Answer: \(answer!)")
         }
         let currentRow = guesses[guessNumber]
@@ -200,7 +209,7 @@ extension GameViewController: SubmitViewControllerDelegate {
                     if self.submittedGuesses[self.guessNumber-1][i] != 2 {
                         if self.guessNumber == 6 {
                             alertTitle = "Failure"
-                            alertMessage = "Oops! You used all your guesses! The correct answer was \(self.answer!)"
+                            alertMessage = "Oops! You used all your guesses! The correct answer was \(self.answer!.uppercased())"
                             break
                         }
                         return
@@ -221,8 +230,8 @@ extension GameViewController: SubmitViewControllerDelegate {
                 let newGameAction = UIAlertAction(title: "New Game", style: .default) { (action:UIAlertAction!) in
                     finishAlert.dismiss(animated: true)
                     self.answer = nil
-                    self.guesses = Array(repeating: Array(repeating: nil, count: 5), count: 6)
-                    self.submittedGuesses = Array(repeating: Array(repeating: nil, count: 5), count: 6)
+                    self.guesses = Array(repeating: Array(repeating: nil, count: self.numOfLetters!), count: 6)
+                    self.submittedGuesses = Array(repeating: Array(repeating: nil, count: self.numOfLetters!), count: 6)
                     self.guessNumber = 0
                     self.keyColorMap = ["q": -1, "w": -1, "e": -1, "r": -1, "t": -1, "y": -1, "u": -1, "i": -1, "o": -1, "p": -1, "a": -1, "s": -1, "d": -1, "f": -1, "g": -1, "h": -1, "j": -1, "k": -1, "l": -1, "z": -1, "x": -1, "c": -1, "v": -1, "b": -1, "n": -1, "m": -1]
                     self.gridVC.reloadData()
