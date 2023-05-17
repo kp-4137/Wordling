@@ -10,6 +10,7 @@ import UIKit
 class GameViewController: UIViewController {
     
     var numOfLetters: Int? = nil
+    var difficulty: Int? = nil
     var answer: String? = nil
     var guesses: [[Character?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
     var submittedGuesses: [[Int?]] = Array(repeating: Array(repeating: nil, count: 5), count: 6)
@@ -23,14 +24,14 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        title = "WORDLE"
+        title = "WORDLING"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
                                                            style: .plain,
                                                            target: self,
                                                            action: #selector(dismissSelf))
-        if let numOfLetters = numOfLetters {
-            guesses = Array(repeating: Array(repeating: nil, count: numOfLetters), count: 6)
-            submittedGuesses = Array(repeating: Array(repeating: nil, count: numOfLetters), count: 6)
+        if let numOfLetters = numOfLetters, let difficulty = difficulty {
+            guesses = Array(repeating: Array(repeating: nil, count: numOfLetters), count: difficulty)
+            submittedGuesses = Array(repeating: Array(repeating: nil, count: numOfLetters), count: difficulty)
         }
         addChildren()
     }
@@ -171,13 +172,12 @@ extension GameViewController: SubmitViewControllerDelegate {
                 wordsArray = words.sixLetterWords
             }
             answer = wordsArray.randomElement()!
-            print("Answer: \(answer!)")
         }
         let currentRow = guesses[guessNumber]
         let currentGuessString = String(currentRow.compactMap { $0 })
         isValid(word: currentGuessString, apiKey: "7adf5b3a-3c5f-46db-9056-8d1ab69045d2") { (result) in
             DispatchQueue.main.async {
-                if result == false {
+                if result == false && self.answer != currentGuessString {
                     self.showInvalidWordAlert(message: "Word not found in our dictionary", duration: 1.0)
                     return
                 }
@@ -207,7 +207,7 @@ extension GameViewController: SubmitViewControllerDelegate {
                 var alertMessage: String = ""
                 for i in 0..<self.submittedGuesses[self.guessNumber-1].count {
                     if self.submittedGuesses[self.guessNumber-1][i] != 2 {
-                        if self.guessNumber == 6 {
+                        if self.guessNumber == self.difficulty {
                             alertTitle = "Failure"
                             alertMessage = "Oops! You used all your guesses! The correct answer was \(self.answer!.uppercased())"
                             break
@@ -230,8 +230,8 @@ extension GameViewController: SubmitViewControllerDelegate {
                 let newGameAction = UIAlertAction(title: "New Game", style: .default) { (action:UIAlertAction!) in
                     finishAlert.dismiss(animated: true)
                     self.answer = nil
-                    self.guesses = Array(repeating: Array(repeating: nil, count: self.numOfLetters!), count: 6)
-                    self.submittedGuesses = Array(repeating: Array(repeating: nil, count: self.numOfLetters!), count: 6)
+                    self.guesses = Array(repeating: Array(repeating: nil, count: self.numOfLetters!), count: self.difficulty!)
+                    self.submittedGuesses = Array(repeating: Array(repeating: nil, count: self.numOfLetters!), count: self.difficulty!)
                     self.guessNumber = 0
                     self.keyColorMap = ["q": -1, "w": -1, "e": -1, "r": -1, "t": -1, "y": -1, "u": -1, "i": -1, "o": -1, "p": -1, "a": -1, "s": -1, "d": -1, "f": -1, "g": -1, "h": -1, "j": -1, "k": -1, "l": -1, "z": -1, "x": -1, "c": -1, "v": -1, "b": -1, "n": -1, "m": -1]
                     self.gridVC.reloadData()

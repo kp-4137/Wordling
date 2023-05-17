@@ -71,8 +71,31 @@ class ViewController: UIViewController {
     @objc func startBtnTapped(_ sender: UIButton) {
         let gameVC = GameViewController()
         gameVC.numOfLetters = sender.tag
-        let navVC = UINavigationController(rootViewController: gameVC)
-        navVC.modalPresentationStyle = .fullScreen
-        present(navVC, animated: true)
+        let difficultyAlert = UIAlertController(title: "Select a difficulty", message: nil ,preferredStyle: .alert)
+        let easyAction = UIAlertAction(title: "Easy", style: .default) { (action: UIAlertAction!) in
+            gameVC.difficulty = 6
+            difficultyAlert.dismiss(animated: true)
+            let navVC = UINavigationController(rootViewController: gameVC)
+            navVC.modalPresentationStyle = .fullScreen
+            self.present(navVC, animated: true)
+        }
+        let mediumAction = UIAlertAction(title: "Medium", style: .default) { (action: UIAlertAction!) in
+            gameVC.difficulty = 5
+            difficultyAlert.dismiss(animated: true)
+            let navVC = UINavigationController(rootViewController: gameVC)
+            navVC.modalPresentationStyle = .fullScreen
+            self.present(navVC, animated: true)
+        }
+        let hardAction = UIAlertAction(title: "Hard", style: .default) { (action: UIAlertAction!) in
+            gameVC.difficulty = 4
+            difficultyAlert.dismiss(animated: true)
+            let navVC = UINavigationController(rootViewController: gameVC)
+            navVC.modalPresentationStyle = .fullScreen
+            self.present(navVC, animated: true)
+        }
+        difficultyAlert.addAction(easyAction)
+        difficultyAlert.addAction(mediumAction)
+        difficultyAlert.addAction(hardAction)
+        present(difficultyAlert, animated: true)
     }
 }
